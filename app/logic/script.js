@@ -10,21 +10,19 @@ let numberB = 5;
 
 function handleOperation(a, operator, b) {
   switch (operator) {
-    case operator === '+':
-      add(a, b);
-      break;
-    case operator === '-':
-      subtract(a, b);
-      break;
-    case operator === '*':
-    case operator === 'x':
-      multiply(a, b);
-      break;
-    case operator === '/':
-      divide(a, b);
-      break;
+    case '+':
+      return add(a, b);
+    case '-':
+      return subtract(a, b);
+    case '*':
+    case 'x':
+      return multiply(a, b);
+    case '/':
+      return divide(a, b);
 
     default:
-      break;
+      return undefined;
   }
 }
+
+console.log(handleOperation(numberA, operator, numberB));
