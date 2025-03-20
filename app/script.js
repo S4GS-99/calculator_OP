@@ -1,42 +1,89 @@
-// # DOM
+////////
+let firstNumber = '';
+let operator = '';
+let secondNumber = '';
+let shouldResetDisplay = false;
+////////
+
+// DOM
 const DISPLAY = document.querySelector('#display');
-const NUMBERS = document.querySelectorAll('.number');
-const OPERATORS = document.querySelectorAll('.operator');
-const ACTIONS = document.querySelectorAll('.action');
+const NUMBERS = document.querySelectorAll('[data-number]');
+const OPERATORS = document.querySelectorAll('[data-operator]');
+const EQUALS = document.querySelector('[data-equals]');
+const CLEAR = document.querySelector('[data-clear]');
 
-// # OPERATIONS
-const add = (a, b) => a + b;
-const subtract = (a, b) => a - b;
-const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
-
-////////
-let numberA = 3;
-let operator = '+';
-let numberB = 5;
-////////
-
-function handleOperation(a, operator, b) {
-  switch (operator) {
-    case '+':
-      return add(a, b);
-    case '-':
-      return subtract(a, b);
-    case '*':
-    case 'x':
-      return multiply(a, b);
-    case '/':
-      return divide(a, b);
-
-    default:
-      return undefined;
-  }
-}
-
-console.log(handleOperation(numberA, operator, numberB));
+// EVENT LISTENERS
+NUMBERS.forEach(button =>
+  button.addEventListener('click', () => handleNumber(button.textContent))
+);
+OPERATORS.forEach(button =>
+  button.addEventListener('click', () => handleOperator(button.textContent))
+);
+EQUALS.addEventListener('click', () => evaluate());
+CLEAR.addEventListener('click', () => resetCalculator());
 
 // DISPLAY
 const para = document.createElement('p');
-para.textContent = `${numberA} ${operator} ${numberB}`;
-
+para.textContent = '';
 DISPLAY.appendChild(para);
+
+// FUNCTIONS
+function evaluate() {
+  if (firstNumber === '' || operator === '' || secondNumber === '') return;
+
+  const a = parseInt(firstNumber);
+  const b = parseInt(secondNumber);
+  let result;
+
+  switch (operator) {
+    case '+':
+      result = a + b;
+      break;
+    case '-':
+      result = a - b;
+      break;
+    case '*':
+    case 'x':
+      result = a * b;
+      break;
+    case '/':
+      result = b !== 0 ? a / b : 'Error';
+      break;
+  }
+
+  resetCalculator();
+  DISPLAY.textContent = result;
+
+  // The result becomes 'firstNumber' to keep calculating over it
+  firstNumber = result;
+}
+
+function handleNumber(number) {
+  if (shouldResetDisplay) {
+    DISPLAY.textContent = '';
+    shouldResetDisplay = false;
+  }
+
+  if (operator === '') {
+    firstNumber += parseInt(number);
+    DISPLAY.textContent = firstNumber;
+  } else {
+    secondNumber += parseInt(number);
+    DISPLAY.textContent = secondNumber;
+  }
+}
+
+function handleOperator(sign) {
+  if (firstNumber === '') return;
+  if (secondNumber !== '') evaluate();
+
+  operator = sign;
+}
+
+function resetCalculator() {
+  DISPLAY.textContent = '';
+  firstNumber = '';
+  operator = '';
+  secondNumber = '';
+  shouldResetDisplay = false;
+}
