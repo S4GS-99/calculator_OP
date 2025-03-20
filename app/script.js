@@ -1,8 +1,12 @@
 ////////
+// INITIAL STATE
 let firstNumber = '';
 let operator = '';
 let secondNumber = '';
 let shouldResetDisplay = false;
+
+// Configurable precision for decimal results
+const DECIMAL_PRECISION = 2;
 ////////
 
 // DOM
@@ -33,6 +37,7 @@ DISPLAY.appendChild(para);
  * Evaluates the arithmetic operation based on the stored numbers and operator.
  * * If any required operand or operator is missing, the function returns without performing calculation.
  * * After calculation, it resets the calculator state and displays the result.
+ * * Non-integer results are formatted to a configurable decimal precision (default: 2).
  * * The result becomes the first number for subsequent calculations.
  * @returns {void}
  * @throws {string} Returns 'Error' string when attempting division by zero
@@ -40,8 +45,8 @@ DISPLAY.appendChild(para);
 function evaluate() {
   if (firstNumber === '' || operator === '' || secondNumber === '') return;
 
-  const a = parseInt(firstNumber);
-  const b = parseInt(secondNumber);
+  const a = parseFloat(firstNumber);
+  const b = parseFloat(secondNumber);
   let result;
 
   switch (operator) {
@@ -56,15 +61,25 @@ function evaluate() {
       result = a * b;
       break;
     case '/':
-      result = b !== 0 ? a / b : 'Error';
+      if (b === 0) {
+        resetCalculator();
+        para.textContent = 'ERROR';
+        return;
+      }
+      result = a / b;
       break;
   }
 
-  resetCalculator();
-  para.textContent = result;
+  para.textContent = Number.isInteger(result)
+    ? result.toString()
+    : result.toFixed(DECIMAL_PRECISION);
 
   // The result becomes 'firstNumber' to keep calculating over it
   firstNumber = result;
+  operator = '';
+  secondNumber = '';
+  // Set the flag to reset the display on the next number input
+  shouldResetDisplay = true;
 }
 
 /**
@@ -77,6 +92,7 @@ function evaluate() {
 function handleNumber(number) {
   if (shouldResetDisplay) {
     para.textContent = '';
+    firstNumber = '';
     shouldResetDisplay = false;
   }
 
@@ -101,6 +117,7 @@ function handleOperator(sign) {
   if (secondNumber !== '') evaluate();
 
   operator = sign;
+  shouldResetDisplay = false;
 }
 
 /**
