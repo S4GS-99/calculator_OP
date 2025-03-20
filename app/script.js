@@ -11,6 +11,9 @@ const DECIMAL_PRECISION = 2;
 
 // DOM
 const DISPLAY = document.querySelector('#display');
+const MEMORY_SYMBOL = document.querySelector('#memory');
+const CURRENT_OPERATION = document.querySelector('#operation');
+const RESULT = document.querySelector('#result');
 const NUMBERS = document.querySelectorAll('[data-number]');
 const OPERATORS = document.querySelectorAll('[data-operator]');
 const EQUALS = document.querySelector('[data-equals]');
@@ -64,7 +67,7 @@ function evaluate() {
     case '÷':
       if (b === 0) {
         resetCalculator();
-        para.textContent = 'ERROR';
+        RESULT.textContent = 'ERROR';
         return;
       }
       result = a / b;
@@ -72,12 +75,13 @@ function evaluate() {
     default:
       // Handle unexpected operators
       resetCalculator();
-      para.textContent = 'ERROR';
+      RESULT.textContent = 'ERROR';
       console.error(`Unexpected operator: ${operator}`);
       return;
   }
 
-  para.textContent = Number.isInteger(result)
+  CURRENT_OPERATION.textContent += ` ${secondNumber} =`;
+  RESULT.textContent = Number.isInteger(result)
     ? result.toString()
     : result.toFixed(DECIMAL_PRECISION);
 
@@ -98,29 +102,34 @@ function evaluate() {
  */
 function handleNumber(number) {
   if (shouldResetDisplay) {
-    para.textContent = '';
+    MEMORY_SYMBOL.textContent = '';
+    CURRENT_OPERATION.textContent = '';
+    RESULT.textContent = '';
     firstNumber = '';
     shouldResetDisplay = false;
   }
 
   if (operator === '') {
     firstNumber += number;
-    para.textContent = firstNumber;
+    RESULT.textContent = firstNumber;
   } else {
     secondNumber += number;
-    para.textContent = secondNumber;
+    RESULT.textContent = secondNumber;
   }
 }
 
 /**
  * Handles the operator input for the calculator operations.
  * * If the first number is not set, the function exits early.
- * * If the second number is already set, it evaluates the current operation
- * before assigning the new operator.
+ * * If the second number is already set, it evaluates the current operation before assigning the new operator.
  * @param {string} sign - The operator symbol (e.g., '+', '-', '*', '/').
  */
 function handleOperator(sign) {
   if (firstNumber === '') return;
+  if (firstNumber !== '') {
+    CURRENT_OPERATION.textContent = `${firstNumber}  ${sign}`;
+    RESULT.textContent = '';
+  }
   if (secondNumber !== '') evaluate();
 
   operator = sign;
@@ -132,7 +141,9 @@ function handleOperator(sign) {
  * resetting the stored numbers and operator, and disabling the display reset flag.
  */
 function resetCalculator() {
-  para.textContent = '';
+  MEMORY_SYMBOL.textContent = '';
+  CURRENT_OPERATION.textContent = '';
+  RESULT.textContent = '';
   firstNumber = '';
   operator = '';
   secondNumber = '';

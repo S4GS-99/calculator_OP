@@ -1,6 +1,36 @@
+.quantico-regular {
+  font-family: 'Quantico', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.quantico-bold {
+  font-family: 'Quantico', sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.quantico-regular-italic {
+  font-family: 'Quantico', sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.quantico-bold-italic {
+  font-family: 'Quantico', sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
 html,
 :root {
   /* FONTS */
+  --screen-font: 'Silkscreen', sans-serif;
+  --ui-font: 'Quantico', sans-serif;
+  --regular: 400;
+  --bold: 700;
+
+  /* FONTS SIZES */
   --text-base: 16px;
   --xs-text: 0.5rem;
   --sm-text: 0.75rem;
@@ -64,19 +94,42 @@ main {
   height: 600px;
   border: 2px solid black;
   border-radius: 2.5vw;
+  font-family: var(--ui-font);
 
   #display {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      'memory ... operation operation operation operation'
+      '... result result result result result';
+
     max-width: var(--full-w);
-    min-height: 5rem;
+    min-height: 8rem;
     margin: 1.5rem;
     border-radius: 1vw;
     background-color: #607d8b;
     color: #000000;
-    font-family: monospace;
+    font-family: var(--screen-font);
     text-align: right;
     padding: 15px;
     border: 3px solid #455a64;
     box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+
+    #memory {
+      grid-area: memory;
+    }
+
+    #operation {
+      grid-area: operation;
+
+      font-size: var(--md-text);
+    }
+
+    #result {
+      grid-area: result;
+      text-align: right;
+      font-size: var(--2xl-text);
+    }
   }
 
   #buttons {
@@ -93,6 +146,12 @@ main {
       'percentage one two three minus'
       'decimal zero zero equals sum';
     gap: 0.5rem;
+
+    button {
+      font-family: var(--ui-font);
+      font-weight: 600;
+      font-size: var(--md-text);
+    }
   }
 }
 
