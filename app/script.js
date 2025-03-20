@@ -57,10 +57,11 @@ function evaluate() {
       result = a - b;
       break;
     case '*':
-    case 'x':
+    case 'X':
       result = a * b;
       break;
     case '/':
+    case '÷':
       if (b === 0) {
         resetCalculator();
         para.textContent = 'ERROR';
@@ -68,6 +69,12 @@ function evaluate() {
       }
       result = a / b;
       break;
+    default:
+      // Handle unexpected operators
+      resetCalculator();
+      para.textContent = 'ERROR';
+      console.error(`Unexpected operator: ${operator}`);
+      return;
   }
 
   para.textContent = Number.isInteger(result)
