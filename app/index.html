@@ -7,37 +7,41 @@
   <title>Calc Operations</title>
 
   <script src="./script.js" defer></script>
+  <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
-  <header>
-    <h1>CALCULATOR</h1>
-  </header>
   <main>
-    <div class="calculator">
+    <div id="calculator">
       <div id="display"></div>
-      <div id="numbers">
-        <button type="button" data-number="1">1</button>
-        <button type="button" data-number="2">2</button>
-        <button type="button" data-number="3">3</button>
-        <button type="button" data-number="4">4</button>
-        <button type="button" data-number="5">5</button>
-        <button type="button" data-number="6">6</button>
-        <button type="button" data-number="7">7</button>
-        <button type="button" data-number="8">8</button>
-        <button type="button" data-number="9">9</button>
-        <button type="button" data-number="0">0</button>
-      </div>
-      <div id="operators">
+      <div id="buttons">
+        <button type="button" class="number" data-number="1">1</button>
+        <button type="button" class="number" data-number="2">2</button>
+        <button type="button" class="number" data-number="3">3</button>
+        <button type="button" class="number" data-number="4">4</button>
+        <button type="button" class="number" data-number="5">5</button>
+        <button type="button" class="number" data-number="6">6</button>
+        <button type="button" class="number" data-number="7">7</button>
+        <button type="button" class="number" data-number="8">8</button>
+        <button type="button" class="number" data-number="9">9</button>
+        <button type="button" class="number" data-number="0">0</button>
+        <button type="button" class="number" data-number=".">.</button>
+
         <button type="button" class="operator" data-operator="+">+</button>
         <button type="button" class="operator" data-operator="-">-</button>
-        <button type="button" class="operator" data-operator="*">*</button>
-        <button type="button" class="operator" data-operator="/">/</button>
-        <button type="button" class="operator" data-equals="="> = </button>
-      </div>
-      <div id="actions">
-        <button type="button" class="action" data-clear>C</button>
-        <button type="button" class="action" data-backspace>CE</button>
+        <button type="button" class="operator" data-operator="*">X</button>
+        <button type="button" class="operator" data-operator="/">÷</button>
+        <button type="button" class="operator" data-equals> = </button>
+
+        <button type="button" class="action" data-clear="all">AC</button>
+        <button type="button" class="action" data-clear="entry">CE</button>
+        <!-- <button type="button" class="action" data-clear="number">◄</button> -->
+        <button type="button" class="action" data-memory="clear">MC</button>
+        <button type="button" class="action" data-memory="recall">MR</button>
+        <button type="button" class="action" data-memory="subtract">M-</button>
+        <button type="button" class="action" data-memory="add">M+</button>
+        <button type="button" class="action" data-change>±</button>
+        <button type="button" class="action" data-percentage>%</button>
       </div>
     </div>
   </main>

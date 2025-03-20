@@ -1,0 +1,179 @@
+html,
+:root {
+  /* FONTS */
+  --text-base: 16px;
+  --xs-text: 0.5rem;
+  --sm-text: 0.75rem;
+  --md-text: 1.25rem;
+  --lg-text: 1.5rem;
+  --xl-text: 2rem;
+  --2xl-text: 2.5rem;
+  --3xl-text: 3rem;
+
+  /* CONTAINER WIDTH */
+  --sm-w: 360px;
+  --md-w: 481px;
+  --lg-w: 769px;
+  --xl-w: 1024px;
+  --full-w: 100%;
+
+  height: 100%;
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+header {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+
+  width: var(--full-w);
+  height: 2em;
+
+  h1 {
+    margin: 1.5rem;
+    font-size: var(--xl-text);
+  }
+}
+
+main {
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  margin: 1.5em;
+}
+
+#calculator {
+  display: flex;
+  flex-direction: column;
+
+  width: var(--sm-w);
+  height: 600px;
+  border: 2px solid black;
+  border-radius: 2.5vw;
+
+  #display {
+    max-width: var(--full-w);
+    min-height: 5rem;
+    margin: 1.5rem;
+    border-radius: 1vw;
+    background-color: #607d8b;
+    color: #000000;
+    font-family: monospace;
+    text-align: right;
+    padding: 15px;
+    border: 3px solid #455a64;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.2);
+  }
+
+  #buttons {
+    height: 100%;
+    margin: 0.75rem;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-areas:
+      'ac mc mr subtract add'
+      'ce seven eight nine divide'
+      'change four five six multiply'
+      'percentage one two three minus'
+      'decimal zero zero equals sum';
+    gap: 0.5rem;
+  }
+}
+
+/* FIRST ROW */
+[data-clear='all'] {
+  grid-area: ac;
+}
+[data-memory='clear'] {
+  grid-area: mc;
+}
+[data-memory='recall'] {
+  grid-area: mr;
+}
+[data-memory='subtract'] {
+  grid-area: subtract;
+}
+[data-memory='add'] {
+  grid-area: add;
+}
+
+/* SECOND ROW */
+[data-clear='entry'] {
+  grid-area: ce;
+}
+[data-number='7'] {
+  grid-area: seven;
+}
+[data-number='8'] {
+  grid-area: eight;
+}
+[data-number='9'] {
+  grid-area: nine;
+}
+[data-operator='/'] {
+  grid-area: divide;
+}
+
+/* THIRD ROW */
+[data-change] {
+  grid-area: change;
+}
+[data-number='4'] {
+  grid-area: four;
+}
+[data-number='5'] {
+  grid-area: five;
+}
+[data-number='6'] {
+  grid-area: six;
+}
+[data-operator='*'] {
+  grid-area: multiply;
+}
+
+/* FOURTH ROW */
+[data-percentage] {
+  grid-area: percentage;
+}
+[data-number='1'] {
+  grid-area: one;
+}
+[data-number='2'] {
+  grid-area: two;
+}
+[data-number='3'] {
+  grid-area: three;
+}
+[data-operator='-'] {
+  grid-area: minus;
+}
+
+/* FIFTH ROW */
+[data-number='.'] {
+  grid-area: decimal;
+}
+[data-number='0'] {
+  grid-area: zero;
+}
+[data-equals] {
+  grid-area: equals;
+}
+[data-operator='+'] {
+  grid-area: sum;
+}
