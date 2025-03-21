@@ -19,6 +19,10 @@ const OPERATORS = document.querySelectorAll('[data-operator]');
 const EQUALS = document.querySelector('[data-equals]');
 const CLEAR = document.querySelector('[data-clear]');
 
+const DECIMAL_SEPARATOR = [...NUMBERS].find(
+  element => element.textContent === '.'
+);
+
 // EVENT LISTENERS
 NUMBERS.forEach(button =>
   button.addEventListener('click', () => handleNumber(button.textContent))
@@ -80,10 +84,10 @@ function evaluate() {
       return;
   }
 
-  CURRENT_OPERATION.textContent += ` ${secondNumber} =`;
-  RESULT.textContent = Number.isInteger(result)
-    ? result.toString()
-    : result.toFixed(DECIMAL_PRECISION);
+  const formattedOperation = formatIfFloat(Number(secondNumber));
+  const formattedResult = formatIfFloat(Number(result));
+  CURRENT_OPERATION.textContent += ` ${formattedOperation} =`;
+  RESULT.textContent = formattedResult;
 
   // The result becomes 'firstNumber' to keep calculating over it
   firstNumber = result;
@@ -102,17 +106,19 @@ function evaluate() {
  */
 function handleNumber(number) {
   if (shouldResetDisplay) {
-    MEMORY_SYMBOL.textContent = '';
-    CURRENT_OPERATION.textContent = '';
-    RESULT.textContent = '';
-    firstNumber = '';
-    shouldResetDisplay = false;
+    resetDisplay();
   }
 
   if (operator === '') {
+    // Prevent multiple decimal points in firstNumber
+    if (number === '.' && firstNumber.includes('.')) return;
+
     firstNumber += number;
     RESULT.textContent = firstNumber;
   } else {
+    // Prevent multiple decimal points in secondNumber
+    if (number === '.' && secondNumber.includes('.')) return;
+
     secondNumber += number;
     RESULT.textContent = secondNumber;
   }
@@ -133,6 +139,26 @@ function handleOperator(sign) {
   if (secondNumber !== '') evaluate();
 
   operator = sign;
+  shouldResetDisplay = false;
+}
+
+function formatIfFloat(number) {
+  if (typeof number !== 'number') return;
+
+  // Formatting to 2 decimals if number is a Float
+  return !Number.isInteger(number)
+    ? parseFloat(number.toFixed(DECIMAL_PRECISION))
+    : number;
+}
+
+/**
+ * Clears the display and resets relevant variables when the display reset flag is set.
+ */
+function resetDisplay() {
+  firstNumber = '';
+  MEMORY_SYMBOL.textContent = '';
+  CURRENT_OPERATION.textContent = '';
+  RESULT.textContent = '';
   shouldResetDisplay = false;
 }
 
