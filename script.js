@@ -113,6 +113,9 @@ function handleNumber(number) {
     // Prevent multiple decimal points in firstNumber
     if (number === '.' && firstNumber.includes('.')) return;
 
+     // Stop input if firstNumber reaches 9 digits
+    if (firstNumber.replace('.', '').length >= 9) return
+
     firstNumber += number;
     RESULT.textContent = firstNumber;
   } else {
