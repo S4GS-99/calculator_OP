@@ -106,6 +106,11 @@ main {
       grid-area: result;
       text-align: right;
       font-size: var(--2xl-text);
+
+      &.error {
+        font-size: var(--md-text);
+        text-align: center;
+      }
     }
   }
 

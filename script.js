@@ -19,6 +19,7 @@ const OPERATORS = document.querySelectorAll('[data-operator]');
 const EQUALS = document.querySelector('[data-equals]');
 const RESET = document.querySelector('[data-clear="all"]');
 const CLEAR = document.querySelector('[data-clear="entry"]');
+const BACKSPACE = document.querySelector('[data-function="backspace"]');
 
 const DECIMAL_SEPARATOR = [...NUMBERS].find(
   element => element.textContent === '.'
@@ -37,6 +38,7 @@ OPERATORS.forEach(button =>
 EQUALS.addEventListener('click', () => evaluate());
 RESET.addEventListener('click', () => resetCalculator());
 CLEAR.addEventListener('click', () => resetLastEntry());
+BACKSPACE.addEventListener('click', () => handleBackspace());
 
 // DISPLAY
 const para = document.createElement('p');
@@ -58,6 +60,8 @@ function handleKeyboardInput(e) {
   } else if (key === 'Enter' || key === '=') {
     evaluate();
   } else if (key === 'Backspace') {
+    handleBackspace();
+  } else if (key === 'Escape') {
     resetLastEntry();
   } else if (key.toLowerCase() === 'c') {
     resetCalculator();
@@ -95,7 +99,8 @@ function evaluate() {
     case '÷':
       if (b === 0) {
         resetCalculator();
-        RESULT.textContent = 'ERROR';
+        RESULT.classList.add('error');
+        RESULT.textContent = 'Cannot divide by zero';
         return;
       }
       result = a / b;
@@ -205,6 +210,16 @@ function resetDisplay() {
   CURRENT_OPERATION.textContent = '';
   RESULT.textContent = '';
   shouldResetDisplay = false;
+}
+
+function handleBackspace() {
+  if (operator === '') {
+    firstNumber = firstNumber.slice(0, -1);
+    RESULT.textContent = firstNumber;
+  } else {
+    secondNumber = secondNumber.slice(0, -1);
+    RESULT.textContent = secondNumber;
+  }
 }
 
 /**
