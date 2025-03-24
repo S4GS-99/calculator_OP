@@ -17,7 +17,8 @@ const RESULT = document.querySelector('#result');
 const NUMBERS = document.querySelectorAll('[data-number]');
 const OPERATORS = document.querySelectorAll('[data-operator]');
 const EQUALS = document.querySelector('[data-equals]');
-const CLEAR = document.querySelector('[data-clear]');
+const RESET = document.querySelector('[data-clear="all"]');
+const CLEAR = document.querySelector('[data-clear="entry"]');
 
 const DECIMAL_SEPARATOR = [...NUMBERS].find(
   element => element.textContent === '.'
@@ -31,7 +32,8 @@ OPERATORS.forEach(button =>
   button.addEventListener('click', () => handleOperator(button.textContent))
 );
 EQUALS.addEventListener('click', () => evaluate());
-CLEAR.addEventListener('click', () => resetCalculator());
+RESET.addEventListener('click', () => resetCalculator());
+CLEAR.addEventListener('click', () => resetLastEntry());
 
 // DISPLAY
 const para = document.createElement('p');
@@ -113,8 +115,8 @@ function handleNumber(number) {
     // Prevent multiple decimal points in firstNumber
     if (number === '.' && firstNumber.includes('.')) return;
 
-     // Stop input if firstNumber reaches 9 digits
-    if (firstNumber.replace('.', '').length >= 9) return
+    // Stop input if firstNumber reaches 9 digits
+    if (firstNumber.replace('.', '').length >= 9) return;
 
     firstNumber += number;
     RESULT.textContent = firstNumber;
@@ -145,12 +147,17 @@ function handleOperator(sign) {
   shouldResetDisplay = false;
 }
 
+/**
+ * Formats a number to have a maximum of 2 decimal places if it's a float number
+ * @param {number} number - The number to format
+ * @returns {(number|undefined)} The formatted number if input is valid, undefined otherwise
+ */
 function formatIfFloat(number) {
   if (typeof number !== 'number') return;
 
   // Formatting to 2 decimals if number is a Float
   return !Number.isInteger(number)
-    ? parseFloat(number.toFixed(DECIMAL_PRECISION))
+    ? Number(number.toFixed(DECIMAL_PRECISION))
     : number;
 }
 
@@ -163,6 +170,25 @@ function resetDisplay() {
   CURRENT_OPERATION.textContent = '';
   RESULT.textContent = '';
   shouldResetDisplay = false;
+}
+
+/**
+ * Resets the last number entry based on operator state
+ * If no operator is present, resets firstNumber
+ * If operator exists, resets secondNumber
+ *
+ * Clears the calculator display in both cases
+ */
+function resetLastEntry() {
+  if (operator === '') {
+    firstNumber = '';
+    RESULT.textContent = '';
+  } else {
+    secondNumber = '';
+    RESULT.textContent = '';
+  }
+
+  console.log(firstNumber, secondNumber);
 }
 
 /**
