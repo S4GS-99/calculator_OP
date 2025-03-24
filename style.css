@@ -78,8 +78,8 @@ main {
     grid-template-rows: 1fr 1fr 1fr;
     grid-template-areas:
       'memory ... operation operation operation operation'
-      '... result result result result result'
-      '... result result result result result';
+      'result result result result result result'
+      'result result result result result result';
 
     max-width: var(--full-w);
     min-height: 6.5rem;
@@ -105,7 +105,12 @@ main {
     & #result {
       grid-area: result;
       text-align: right;
-      font-size: var(--3xl-text);
+      font-size: var(--2xl-text);
+
+      &.error {
+        font-size: var(--md-text);
+        text-align: center;
+      }
     }
   }
 
