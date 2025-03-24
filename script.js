@@ -25,6 +25,9 @@ const DECIMAL_SEPARATOR = [...NUMBERS].find(
 );
 
 // EVENT LISTENERS
+// Add keyboard support
+document.addEventListener('keydown', handleKeyboardInput);
+
 NUMBERS.forEach(button =>
   button.addEventListener('click', () => handleNumber(button.textContent))
 );
@@ -41,6 +44,25 @@ para.textContent = '';
 DISPLAY.appendChild(para);
 
 // FUNCTIONS
+function handleKeyboardInput(e) {
+  const key = e.key;
+
+  if (!isNaN(key) || key === '.') {
+    // Reset the display if needed before handling the number
+    if (shouldResetDisplay) {
+      resetDisplay();
+    }
+    handleNumber(key);
+  } else if (['+', '-', '*', '/'].includes(key) || key.toLowerCase() === 'x') {
+    handleOperator(key);
+  } else if (key === 'Enter' || key === '=') {
+    evaluate();
+  } else if (key === 'Backspace') {
+    resetLastEntry();
+  } else if (key.toLowerCase() === 'c') {
+    resetCalculator();
+  }
+}
 
 /**
  * Evaluates the arithmetic operation based on the stored numbers and operator.
@@ -133,11 +155,24 @@ function handleNumber(number) {
  * Handles the operator input for the calculator operations.
  * * If the first number is not set, the function exits early.
  * * If the second number is already set, it evaluates the current operation before assigning the new operator.
- * @param {string} sign - The operator symbol (e.g., '+', '-', '*', '/').
+ *
+ * Side effects:
+ * - Updates CURRENT_OPERATION display
+ * - Updates RESULT display
+ * - May trigger evaluation of previous operation
+ * - Modifies global variables: operator, shouldResetDisplay
+ *
+ * @param {string} sign - The operator symbol (e.g., '+', '-', '*', '/', 'x')
+ * @returns {void}
  */
 function handleOperator(sign) {
+  const multiplicationSign = 'X';
   if (firstNumber === '') return;
   if (firstNumber !== '') {
+    if (sign === '*' || sign === 'x') {
+      sign = multiplicationSign;
+    }
+
     CURRENT_OPERATION.textContent = `${firstNumber}  ${sign}`;
     RESULT.textContent = '';
   }
@@ -187,8 +222,6 @@ function resetLastEntry() {
     secondNumber = '';
     RESULT.textContent = '';
   }
-
-  console.log(firstNumber, secondNumber);
 }
 
 /**
