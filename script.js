@@ -46,6 +46,18 @@ para.textContent = '';
 DISPLAY.appendChild(para);
 
 // FUNCTIONS
+/**
+ * Handles keyboard input events for calculator operations
+ *
+ * Processes keyboard inputs for:
+ * - Numbers (0-9) and decimal '.' point
+ * - Operators (+, -, *, /, x)
+ * - Enter or '=' for evaluation
+ * - Backspace for deletion
+ * - Escape for resetting last entry
+ * - 'c' key for full calculator reset
+ * @param {KeyboardEvent} e - The keyboard event object
+ */
 function handleKeyboardInput(e) {
   const key = e.key;
 
@@ -212,6 +224,9 @@ function resetDisplay() {
   shouldResetDisplay = false;
 }
 
+/**
+ * Removes the last digit from the currently active number (firstNumber or secondNumber), and updates the display.
+ */
 function handleBackspace() {
   if (operator === '') {
     firstNumber = firstNumber.slice(0, -1);
