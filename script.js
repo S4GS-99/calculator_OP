@@ -119,7 +119,7 @@ function evaluate() {
   RESULT.textContent = formattedResult;
 
   // The result becomes 'firstNumber' to keep calculating over it
-  firstNumber = result;
+  firstNumber = formatIfFloat(result);
   operator = '';
   secondNumber = '';
   // Set the flag to reset the display on the next number input
