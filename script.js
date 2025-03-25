@@ -17,13 +17,18 @@ const RESULT = document.querySelector('#result');
 const NUMBERS = document.querySelectorAll('[data-number]');
 const OPERATORS = document.querySelectorAll('[data-operator]');
 const EQUALS = document.querySelector('[data-equals]');
-const CLEAR = document.querySelector('[data-clear]');
+const RESET = document.querySelector('[data-clear="all"]');
+const CLEAR = document.querySelector('[data-clear="entry"]');
+const BACKSPACE = document.querySelector('[data-function="backspace"]');
 
 const DECIMAL_SEPARATOR = [...NUMBERS].find(
   element => element.textContent === '.'
 );
 
 // EVENT LISTENERS
+// Add keyboard support
+document.addEventListener('keydown', handleKeyboardInput);
+
 NUMBERS.forEach(button =>
   button.addEventListener('click', () => handleNumber(button.textContent))
 );
@@ -31,7 +36,9 @@ OPERATORS.forEach(button =>
   button.addEventListener('click', () => handleOperator(button.textContent))
 );
 EQUALS.addEventListener('click', () => evaluate());
-CLEAR.addEventListener('click', () => resetCalculator());
+RESET.addEventListener('click', () => resetCalculator());
+CLEAR.addEventListener('click', () => resetLastEntry());
+BACKSPACE.addEventListener('click', () => handleBackspace());
 
 // DISPLAY
 const para = document.createElement('p');
@@ -39,6 +46,27 @@ para.textContent = '';
 DISPLAY.appendChild(para);
 
 // FUNCTIONS
+function handleKeyboardInput(e) {
+  const key = e.key;
+
+  if (!isNaN(key) || key === '.') {
+    // Reset the display if needed before handling the number
+    if (shouldResetDisplay) {
+      resetDisplay();
+    }
+    handleNumber(key);
+  } else if (['+', '-', '*', '/'].includes(key) || key.toLowerCase() === 'x') {
+    handleOperator(key);
+  } else if (key === 'Enter' || key === '=') {
+    evaluate();
+  } else if (key === 'Backspace') {
+    handleBackspace();
+  } else if (key === 'Escape') {
+    resetLastEntry();
+  } else if (key.toLowerCase() === 'c') {
+    resetCalculator();
+  }
+}
 
 /**
  * Evaluates the arithmetic operation based on the stored numbers and operator.
@@ -71,7 +99,8 @@ function evaluate() {
     case '÷':
       if (b === 0) {
         resetCalculator();
-        RESULT.textContent = 'ERROR';
+        RESULT.classList.add('error');
+        RESULT.textContent = 'Cannot divide by zero';
         return;
       }
       result = a / b;
@@ -113,6 +142,9 @@ function handleNumber(number) {
     // Prevent multiple decimal points in firstNumber
     if (number === '.' && firstNumber.includes('.')) return;
 
+    // Stop input if firstNumber reaches 9 digits
+    if (firstNumber.replace('.', '').length >= 9) return;
+
     firstNumber += number;
     RESULT.textContent = firstNumber;
   } else {
@@ -128,11 +160,24 @@ function handleNumber(number) {
  * Handles the operator input for the calculator operations.
  * * If the first number is not set, the function exits early.
  * * If the second number is already set, it evaluates the current operation before assigning the new operator.
- * @param {string} sign - The operator symbol (e.g., '+', '-', '*', '/').
+ *
+ * Side effects:
+ * - Updates CURRENT_OPERATION display
+ * - Updates RESULT display
+ * - May trigger evaluation of previous operation
+ * - Modifies global variables: operator, shouldResetDisplay
+ *
+ * @param {string} sign - The operator symbol (e.g., '+', '-', '*', '/', 'x')
+ * @returns {void}
  */
 function handleOperator(sign) {
+  const multiplicationSign = 'X';
   if (firstNumber === '') return;
   if (firstNumber !== '') {
+    if (sign === '*' || sign === 'x') {
+      sign = multiplicationSign;
+    }
+
     CURRENT_OPERATION.textContent = `${firstNumber}  ${sign}`;
     RESULT.textContent = '';
   }
@@ -142,12 +187,17 @@ function handleOperator(sign) {
   shouldResetDisplay = false;
 }
 
+/**
+ * Formats a number to have a maximum of 2 decimal places if it's a float number
+ * @param {number} number - The number to format
+ * @returns {(number|undefined)} The formatted number if input is valid, undefined otherwise
+ */
 function formatIfFloat(number) {
   if (typeof number !== 'number') return;
 
   // Formatting to 2 decimals if number is a Float
   return !Number.isInteger(number)
-    ? parseFloat(number.toFixed(DECIMAL_PRECISION))
+    ? Number(number.toFixed(DECIMAL_PRECISION))
     : number;
 }
 
@@ -160,6 +210,33 @@ function resetDisplay() {
   CURRENT_OPERATION.textContent = '';
   RESULT.textContent = '';
   shouldResetDisplay = false;
+}
+
+function handleBackspace() {
+  if (operator === '') {
+    firstNumber = firstNumber.slice(0, -1);
+    RESULT.textContent = firstNumber;
+  } else {
+    secondNumber = secondNumber.slice(0, -1);
+    RESULT.textContent = secondNumber;
+  }
+}
+
+/**
+ * Resets the last number entry based on operator state
+ * If no operator is present, resets firstNumber
+ * If operator exists, resets secondNumber
+ *
+ * Clears the calculator display in both cases
+ */
+function resetLastEntry() {
+  if (operator === '') {
+    firstNumber = '';
+    RESULT.textContent = '';
+  } else {
+    secondNumber = '';
+    RESULT.textContent = '';
+  }
 }
 
 /**
