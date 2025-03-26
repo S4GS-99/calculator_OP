@@ -3,6 +3,8 @@
 let firstNumber = '';
 let operator = '';
 let secondNumber = '';
+let memoryValue = 0;
+let memoryIsActive = false;
 let shouldResetDisplay = false;
 
 // Configurable precision for decimal results
@@ -11,7 +13,7 @@ const DECIMAL_PRECISION = 2;
 
 // DOM
 const DISPLAY = document.querySelector('#display');
-const MEMORY_SYMBOL = document.querySelector('#memory');
+const CURRENT_MEMORY = document.querySelector('#memory');
 const CURRENT_OPERATION = document.querySelector('#operation');
 const RESULT = document.querySelector('#result');
 const NUMBERS = document.querySelectorAll('[data-number]');
@@ -20,6 +22,10 @@ const EQUALS = document.querySelector('[data-equals]');
 const RESET = document.querySelector('[data-clear="all"]');
 const CLEAR = document.querySelector('[data-clear="entry"]');
 const BACKSPACE = document.querySelector('[data-function="backspace"]');
+const MEMORY_CLEAR = document.querySelector('[data-memory="clear"]');
+const MEMORY_RECALL = document.querySelector('[data-memory="recall"]');
+const MEMORY_ADD = document.querySelector('[data-memory="add"]');
+const MEMORY_SUBTRACT = document.querySelector('[data-memory="subtract"]');
 
 const DECIMAL_SEPARATOR = [...NUMBERS].find(
   element => element.textContent === '.'
@@ -39,6 +45,10 @@ EQUALS.addEventListener('click', () => evaluate());
 RESET.addEventListener('click', () => resetCalculator());
 CLEAR.addEventListener('click', () => resetLastEntry());
 BACKSPACE.addEventListener('click', () => handleBackspace());
+MEMORY_CLEAR.addEventListener('click', () => handleMemory('clear'));
+MEMORY_RECALL.addEventListener('click', () => handleMemory('recall'));
+MEMORY_ADD.addEventListener('click', () => handleMemory('add'));
+MEMORY_SUBTRACT.addEventListener('click', () => handleMemory('subtract'));
 
 // DISPLAY
 const para = document.createElement('p');
@@ -198,6 +208,49 @@ function handleOperator(sign) {
   operator = sign;
   shouldResetDisplay = false;
 }
+/* 
+handle memory (action)
+  if (!number) return
+
+  if (add memory) 
+    memoryResult += number
+  if (subtract memory)
+    memoryResult -=
+  if (memory recall)
+    result = memoryResult
+  if (memory clear)
+    memoryResult = ''
+ */
+function handleMemory(action) {
+  if (RESULT.textContent === '') return;
+
+  if (action === 'add') {
+    memoryValue += Number(RESULT.textContent);
+    CURRENT_MEMORY.textContent = `M${memoryValue}`;
+    memoryIsActive = true;
+    shouldResetDisplay = true;
+  }
+  if (action === 'subtract') {
+    memoryValue -= Number(RESULT.textContent);
+    CURRENT_MEMORY.textContent = `M${memoryValue}`;
+    memoryIsActive = true;
+    shouldResetDisplay = true;
+  }
+  if (action === 'recall') {
+    operator === ''
+      ? (firstNumber = memoryValue)
+      : (secondNumber = memoryValue);
+
+    RESULT.textContent = memoryValue;
+    memoryIsActive = true;
+    shouldResetDisplay = true;
+  }
+  if (action === 'clear') {
+    memoryValue = 0;
+    memoryIsActive = false;
+    resetDisplay();
+  }
+}
 
 /**
  * Formats a number to have a maximum of 2 decimal places if it's a float number
@@ -217,11 +270,17 @@ function formatIfFloat(number) {
  * Clears the display and resets relevant variables when the display reset flag is set.
  */
 function resetDisplay() {
-  firstNumber = '';
-  MEMORY_SYMBOL.textContent = '';
-  CURRENT_OPERATION.textContent = '';
-  RESULT.textContent = '';
-  shouldResetDisplay = false;
+  if (memoryIsActive) {
+    firstNumber = '';
+    RESULT.textContent = '';
+    shouldResetDisplay = false;
+  } else {
+    firstNumber = '';
+    CURRENT_MEMORY.textContent = '';
+    CURRENT_OPERATION.textContent = '';
+    RESULT.textContent = '';
+    shouldResetDisplay = false;
+  }
 }
 
 /**
@@ -259,9 +318,10 @@ function resetLastEntry() {
  * resetting the stored numbers and operator, and disabling the display reset flag.
  */
 function resetCalculator() {
-  MEMORY_SYMBOL.textContent = '';
+  CURRENT_MEMORY.textContent = '';
   CURRENT_OPERATION.textContent = '';
   RESULT.textContent = '';
+  memoryValue = 0;
   firstNumber = '';
   operator = '';
   secondNumber = '';
