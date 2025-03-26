@@ -208,18 +208,27 @@ function handleOperator(sign) {
   operator = sign;
   shouldResetDisplay = false;
 }
-/* 
-handle memory (action)
-  if (!number) return
 
-  if (add memory) 
-    memoryResult += number
-  if (subtract memory)
-    memoryResult -=
-  if (memory recall)
-    result = memoryResult
-  if (memory clear)
-    memoryResult = ''
+/**
+ * Handles memory operations for a calculator, including adding to memory,
+ * subtracting from memory, recalling memory, and clearing memory.
+ *
+ * @param {string} action - The memory action to perform.
+ *                          Valid values are 'add', 'subtract', 'recall', and 'clear'.
+ *
+ * - 'add': Adds the current result to the memory value.
+ * - 'subtract': Subtracts the current result from the memory value.
+ * - 'recall': Recalls the memory value and updates the display.
+ * - 'clear': Clears the memory value and resets the display.
+ *
+ * Preconditions:
+ * - `RESULT.textContent` should contain a valid number for 'add' and 'subtract' actions.
+ * - The `operator` variable determines whether the memory value is assigned to `firstNumber` or `secondNumber` during recall.
+ *
+ * Side Effects:
+ * - Updates the `memoryValue`, `CURRENT_MEMORY.textContent`, and `RESULT.textContent`.
+ * - Modifies the `memoryIsActive` and `shouldResetDisplay` flags.
+ * - Resets the display when the 'clear' action is performed.
  */
 function handleMemory(action) {
   if (RESULT.textContent === '') return;
