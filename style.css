@@ -124,7 +124,7 @@ main {
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:
       'mc mr subtract add backspace'
-      'ac ce change root sqr'
+      'ac ce invert root sqr'
       'seven eight nine divide percentage'
       'four five six multiply reciprocal'
       'one two three minus equals'
@@ -165,8 +165,8 @@ main {
       grid-area: ce;
       background-color: #ff7f53;
     }
-    & [data-function='change'] {
-      grid-area: change;
+    & [data-function='invert'] {
+      grid-area: invert;
     }
     & [data-function='root'] {
       grid-area: root;

@@ -70,6 +70,29 @@ DISPLAY.appendChild(para);
  */
 function handleKeyboardInput(e) {
   const key = e.key;
+  const ctrlKey = e.ctrlKey;
+
+  if (ctrlKey) {
+    e.preventDefault();
+    switch (key.toLowerCase()) {
+      // Memory functions
+      case 'a':
+        handleMemory('add');
+        break;
+      case 's':
+        handleMemory('subtract');
+        break;
+      case 'r':
+        handleMemory('recall');
+        break;
+      case 'c':
+        handleMemory('clear');
+        break;
+
+      default:
+        break;
+    }
+  }
 
   if (!isNaN(key) || key === '.') {
     // Reset the display if needed before handling the number
@@ -158,6 +181,7 @@ function evaluate() {
 function handleNumber(number) {
   if (shouldResetDisplay) {
     resetDisplay();
+    shouldResetDisplay = false;
   }
 
   if (operator === '') {
@@ -173,38 +197,39 @@ function handleNumber(number) {
     // Prevent multiple decimal points in secondNumber
     if (number === '.' && secondNumber.includes('.')) return;
 
+    // Stop input if secondNumber reaches 9 digits
+    if (secondNumber.replace('.', '').length >= 9) return;
+
     secondNumber += number;
     RESULT.textContent = secondNumber;
   }
 }
 
 /**
- * Handles the operator input for the calculator operations.
- * * If the first number is not set, the function exits early.
+ * Handles the selection of an operator for a calculator operation.
+ * Updates the first number is not set, the function exits early.
  * * If the second number is already set, it evaluates the current operation before assigning the new operator.
+ *
+ * @param {string} sign - The operator sign selected by the user.
+ *                        Can be '+', '-', '*', '/', 'x', etc.
+ *                        The 'x' or '*' signs are normalized to 'X'.
  *
  * Side effects:
  * - Updates CURRENT_OPERATION display
  * - Updates RESULT display
  * - May trigger evaluation of previous operation
  * - Modifies global variables: operator, shouldResetDisplay
- *
- * @param {string} sign - The operator symbol (e.g., '+', '-', '*', '/', 'x')
- * @returns {void}
  */
 function handleOperator(sign) {
-  const multiplicationSign = 'X';
   if (firstNumber === '') return;
-  if (firstNumber !== '') {
-    if (sign === '*' || sign === 'x') {
-      sign = multiplicationSign;
-    }
 
-    CURRENT_OPERATION.textContent = `${firstNumber}  ${sign}`;
-    RESULT.textContent = '';
-  }
+  const multiplicationSign = 'X';
+
+  if (sign === '*' || sign === 'x') sign = multiplicationSign;
   if (secondNumber !== '') evaluate();
 
+  CURRENT_OPERATION.textContent = `${firstNumber}  ${sign}`;
+  RESULT.textContent = '';
   operator = sign;
   shouldResetDisplay = false;
 }
@@ -247,8 +272,8 @@ function handleMemory(action) {
   }
   if (action === 'recall') {
     operator === ''
-      ? (firstNumber = memoryValue)
-      : (secondNumber = memoryValue);
+      ? (firstNumber = memoryValue.toString())
+      : (secondNumber = memoryValue.toString());
 
     RESULT.textContent = memoryValue;
     memoryIsActive = true;
