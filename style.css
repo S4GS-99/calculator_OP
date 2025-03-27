@@ -124,8 +124,8 @@ main {
     grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
     grid-template-areas:
       'mc mr subtract add backspace'
-      'ac ce change root sqr'
-      'seven eight nine divide percentage'
+      'ac ce invert root sqr'
+      'seven eight nine divide percent'
       'four five six multiply reciprocal'
       'one two three minus equals'
       'zero zero decimal sum equals';
@@ -165,8 +165,8 @@ main {
       grid-area: ce;
       background-color: #ff7f53;
     }
-    & [data-function='change'] {
-      grid-area: change;
+    & [data-function='invert'] {
+      grid-area: invert;
     }
     & [data-function='root'] {
       grid-area: root;
@@ -188,8 +188,8 @@ main {
     & [data-operator='/'] {
       grid-area: divide;
     }
-    & [data-function='percentage'] {
-      grid-area: percentage;
+    & [data-function='percent'] {
+      grid-area: percent;
     }
 
     /* FOURTH ROW */
