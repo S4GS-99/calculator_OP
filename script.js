@@ -67,17 +67,21 @@ MEMORY_ADD.addEventListener('click', () => handleMemory('add'));
 MEMORY_SUBTRACT.addEventListener('click', () => handleMemory('subtract'));
 
 // FUNCTIONS
+
 /**
- * Handles keyboard input events for calculator operations
+ * Handles keyboard input events for a calculator application.
  *
- * Processes keyboard inputs for:
- * - Numbers (0-9) and decimal '.' point
- * - Operators (+, -, *, /, x)
- * - Enter or '=' for evaluation
- * - Backspace for deletion
- * - Escape for resetting last entry
- * - 'c' key for full calculator reset
- * @param {KeyboardEvent} e - The keyboard event object
+ * @param {KeyboardEvent} e - The keyboard event triggered by user input.
+ * @property {string} e.key - The key value of the pressed key.
+ * @property {boolean} e.ctrlKey - Indicates whether the Control key is pressed.
+ *
+ * The function processes the input as follows:
+ * - If the Control key is pressed, it prevents the default action and delegates
+ *   handling to `handleCtrlKey` with the key converted to lowercase.
+ * - If the key is a number or a decimal point ('.'), it delegates handling to `handleNumberInput`.
+ * - If the key corresponds to specific math functions ('i', 'r', 's', '%', '√'), it delegates
+ *   handling to `handleMathFunctions` with the key converted to lowercase.
+ * - For all other keys, it delegates handling to `handleOperatorInput`.
  */
 function handleKeyboardInput(e) {
   const key = e.key;
@@ -85,33 +89,70 @@ function handleKeyboardInput(e) {
 
   if (ctrlKey) {
     e.preventDefault();
-    switch (key.toLowerCase()) {
-      // Memory functions
-      case 'a':
-        handleMemory('add');
-        break;
-      case 's':
-        handleMemory('subtract');
-        break;
-      case 'r':
-        handleMemory('recall');
-        break;
-      case 'q':
-        handleMemory('clear');
-        break;
-
-      default:
-        break;
-    }
+    handleCtrlKey(key.toLowerCase());
+    return;
   }
 
   if (!isNaN(key) || key === '.') {
-    // Reset the display if needed before handling the number
-    if (shouldResetDisplay) {
-      resetDisplay();
-    }
-    handleNumber(key);
-  } else if (['+', '-', '*', '/'].includes(key) || key.toLowerCase() === 'x') {
+    handleNumberInput(key);
+  } else if (['i', 'r', 's', '%', '√'].includes(key.toLowerCase())) {
+    handleMathFunctions(key.toLowerCase());
+  } else {
+    handleOperatorInput(key);
+  }
+}
+
+/**
+ * Handles keyboard shortcuts for memory operations when the Control key is pressed.
+ *
+ * Supported keys and their corresponding actions:
+ * - 'a': Adds the current value to memory.
+ * - 's': Subtracts the current value from memory.
+ * - 'r': Recalls the value stored in memory.
+ * - 'q': Clears the memory.
+ *
+ * @param {string} key - The key pressed in combination with the Control key.
+ * Only 'a', 's', 'r', and 'q' are valid inputs.
+ */
+function handleCtrlKey(key) {
+  const actions = {
+    a: () => handleMemory('add'),
+    s: () => handleMemory('subtract'),
+    r: () => handleMemory('recall'),
+    q: () => handleMemory('clear'),
+  };
+
+  if (actions[key]) actions[key](); // Ensures that only valid keys trigger memory operations, as invalid keys will simply be ignored.
+}
+
+/**
+ * Handles the input of a numeric key, updating the display accordingly.
+ * If the display needs to be reset, it resets the display before processing the input.
+ *
+ * @param {string} key - The numeric key input to be handled.
+ */
+function handleNumberInput(key) {
+  if (shouldResetDisplay) resetDisplay();
+  handleNumber(key);
+}
+
+/**
+ * Handles input for calculator operations based on the provided key.
+ *
+ * @param {string} key - The key input to process. It can represent an operator,
+ * a special key (e.g., Enter, Backspace, Escape), or a reset command.
+ *
+ * Supported keys:
+ * - Operators: '+', '-', '*', '/', 'x' (case-insensitive for 'x').
+ * - Special keys:
+ * - 'Enter' or '=': Triggers the evaluation of the current expression.
+ * - 'Backspace': Removes the last entry.
+ * - 'Escape': Resets the last entry.
+ * - 'C' or 'c': Resets the entire calculator.
+ */
+function handleOperatorInput(key) {
+  const operators = ['+', '-', '*', '/', 'x'];
+  if (operators.includes(key.toLowerCase())) {
     handleOperator(key);
   } else if (key === 'Enter' || key === '=') {
     evaluate();
@@ -122,6 +163,30 @@ function handleKeyboardInput(e) {
   } else if (key.toLowerCase() === 'c') {
     resetCalculator();
   }
+}
+
+/**
+ * Executes a mathematical operation based on the provided key.
+ *
+ * Supported keys and their corresponding operations:
+ * - 'i': Inverts the number (e.g., changes the sign).
+ * - 'r': Calculates the square root of the number.
+ * - 's': Squares the number.
+ * - '%': Converts the number to a percentage.
+ * - '/': Calculates the reciprocal of the number.
+ *
+ * @param {string} key - The key representing the mathematical operation to perform.
+ */
+function handleMathFunctions(key) {
+  const mathFunctions = {
+    i: () => invertNumber(), // 'i' for invert
+    r: () => rootNumber(), // 'r' for square root
+    s: () => squareNumber(), // 's' for square
+    '%': () => makePercent(), // '%' for percentage
+    '/': () => makeReciprocal(), // '/' for reciprocal
+  };
+
+  if (mathFunctions[key]) mathFunctions[key](); // Check comment on Ln 109
 }
 
 /**
