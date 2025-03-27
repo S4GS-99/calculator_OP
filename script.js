@@ -296,60 +296,45 @@ function handleMemory(action) {
 }
 
 /**
- * Toggles the sign of the current number being input (either `firstNumber` or `secondNumber`).
- * If no operator is selected, it inverts the `firstNumber`.
- * Otherwise, it inverts the `secondNumber`.
- * Updates the displayed result accordingly.
+ * Inverts the sign of the currently active number.
+ * Uses the `updateActiveNumber` function to apply the inversion.
  */
 function invertNumber() {
-  if (operator === '') {
-    firstNumber = -1 * firstNumber;
-    RESULT.textContent = firstNumber;
-  } else {
-    secondNumber = -1 * secondNumber;
-    RESULT.textContent = secondNumber;
-  }
+  updateActiveNumber(number => -1 * number);
 }
 
+/**
+ * Calculates the square root of the current active number and updates it.
+ * Utilizes the `updateActiveNumber` function to apply the square root operation.
+ */
 function rootNumber() {
-  if (operator === '') {
-    firstNumber = Math.sqrt(firstNumber);
-    RESULT.textContent = firstNumber;
-  } else {
-    secondNumber = Math.sqrt(secondNumber);
-    RESULT.textContent = secondNumber;
-  }
+  updateActiveNumber(number => Math.sqrt(number));
 }
 
+/**
+ * Squares the current active number by raising it to the power of 2.
+ * Utilizes the `updateActiveNumber` function to apply the transformation.
+ */
 function squareNumber() {
-  if (operator === '') {
-    firstNumber = firstNumber ** 2;
-    RESULT.textContent = firstNumber;
-  } else {
-    secondNumber = secondNumber ** 2;
-    RESULT.textContent = secondNumber;
-  }
+  updateActiveNumber(number => number ** 2);
 }
 
+/**
+ * Converts the active number to its percentage equivalent by dividing it by 100.
+ * Utilizes the `updateActiveNumber` function to apply the transformation.
+ */
 function makePercent() {
-  if (operator === '') {
-    firstNumber = firstNumber / 100;
-    RESULT.textContent = firstNumber;
-  } else {
-    secondNumber = secondNumber / 100;
-    RESULT.textContent = secondNumber;
-  }
+  updateActiveNumber(number => number / 100);
 }
 
+/**
+ * Converts the active number to its reciprocal (1 divided by the number).
+ * Utilizes the `updateActiveNumber` function to update the active number.
+ *
+ * @throws {Error} If the active number is zero, as division by zero is undefined.
+ */
 function makeReciprocal() {
-  if (operator === '') {
-    firstNumber = 1 / firstNumber;
-    RESULT.textContent = firstNumber;
-    s;
-  } else {
-    secondNumber = 1 / secondNumber;
-    RESULT.textContent = secondNumber;
-  }
+  updateActiveNumber(number => 1 / number);
 }
 
 /**
@@ -398,13 +383,7 @@ function resetDisplay() {
  * Removes the last digit from the currently active number (firstNumber or secondNumber), and updates the display.
  */
 function handleBackspace() {
-  if (operator === '') {
-    firstNumber = firstNumber.slice(0, -1);
-    RESULT.textContent = firstNumber;
-  } else {
-    secondNumber = secondNumber.slice(0, -1);
-    RESULT.textContent = secondNumber;
-  }
+  updateActiveNumber(number => number.toString().slice(0, -1) || '');
 }
 
 /**
@@ -437,4 +416,21 @@ function resetCalculator() {
   operator = '';
   secondNumber = '';
   shouldResetDisplay = false;
+}
+
+/**
+ * Updates the currently active number (either `firstNumber` or `secondNumber`)
+ * based on the provided callback function and updates the displayed result.
+ *
+ * @param {function(number): number} callback - A function that takes the current
+ * number as input, performs some operation, and returns the updated number.
+ */
+function updateActiveNumber(callback) {
+  if (operator === '') {
+    firstNumber = callback(firstNumber);
+    RESULT.textContent = firstNumber;
+  } else {
+    secondNumber = callback(secondNumber);
+    RESULT.textContent = secondNumber;
+  }
 }
