@@ -1,17 +1,20 @@
 # Calculator App
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A simple and interactive calculator application built with **HTML**, **CSS**, and **JavaScript**. This app supports basic arithmetic operations, advanced mathematical functions, and memory operations.
 
 ---
 
 ## Table of contents
 
-- [Installation](#installation)
-- [Features](#features)
-- [Usage](#usage)
-- [Credits](#credits)
-- [Questions](#question)
-- [License](#license)
+- [Project Title](#calculator-app)
+  - [Installation](#installation)
+  - [Features](#features)
+  - [Usage](#usage)
+  - [Credits](#credits)
+  - [Questions](#question)
+  - [License](#license)
 
 ## Installation
 
