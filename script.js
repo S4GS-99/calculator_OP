@@ -6,6 +6,7 @@ let secondNumber = '';
 let memoryValue = 0;
 let memoryIsActive = false;
 let shouldResetDisplay = false;
+let shouldResetCalculator = false;
 
 // Configurable precision for decimal results
 const DECIMAL_PRECISION = 2;
@@ -153,31 +154,55 @@ function evaluate() {
     case '/':
     case '÷':
       if (b === 0) {
-        resetCalculator();
-        RESULT.classList.add('error');
-        RESULT.textContent = 'Cannot divide by zero';
+        handleDivisionByZero();
         return;
       }
       result = a / b;
       break;
     default:
       // Handle unexpected operators
-      resetCalculator();
-      RESULT.textContent = 'ERROR';
-      console.error(`Unexpected operator: ${operator}`);
+
       return;
   }
+}
 
+/**
+ * Handles the scenario where a division by zero is attempted.
+ * Resets the calculator, displays an error message, and sets a flag
+ * to indicate that the calculator should be reset.
+ */
+function handleDivisionByZero() {
+  resetCalculator();
+  RESULT.classList.add('error');
+  RESULT.textContent = 'Cannot divide by zero';
+  shouldResetCalculator = true;
+}
+
+/**
+ * Handles unexpected operator errors in the calculator.
+ * Resets the calculator state, displays an error message,
+ * and logs the unexpected operator to the console.
+ */
+function handleUnexpectedOperator() {
+  resetCalculator();
+  RESULT.textContent = 'ERROR';
+  console.error(`Unexpected operator: ${operator}`);
+}
+
+/**
+ * Updates the display with the result of the current operation and prepares for the next calculation.
+ *
+ * @param {number|string} result - The result of the current operation to be displayed and used for subsequent calculations.
+ */
+function updateResult(result) {
   const formattedOperation = formatIfFloat(Number(secondNumber));
   const formattedResult = formatIfFloat(Number(result));
   CURRENT_OPERATION.textContent += ` ${formattedOperation} =`;
   RESULT.textContent = formattedResult;
 
-  // The result becomes 'firstNumber' to keep calculating over it
-  firstNumber = formatIfFloat(result);
+  firstNumber = formatIfFloat(result); // The result becomes 'firstNumber' to keep calculating over it
   operator = '';
-  secondNumber = '';
-  // Set the flag to reset the display on the next number input
+  secondNumber = ''; // Set the flag to reset the display on the next number input
   shouldResetDisplay = true;
 }
 
@@ -189,6 +214,10 @@ function evaluate() {
  * @param {string} number - The numeric character to be added to the display
  */
 function handleNumber(number) {
+  if (shouldResetCalculator) {
+    resetCalculator();
+  }
+
   if (shouldResetDisplay) {
     resetDisplay();
   }
@@ -244,40 +273,24 @@ function handleOperator(sign) {
 }
 
 /**
- * Handles memory operations for a calculator, including adding to memory,
- * subtracting from memory, recalling memory, and clearing memory.
+ * Handles memory-related actions for a calculator application.
  *
  * @param {string} action - The memory action to perform.
- *                          Valid values are 'add', 'subtract', 'recall', and 'clear'.
  *
- * - 'add': Adds the current result to the memory value.
- * - 'subtract': Subtracts the current result from the memory value.
- * - 'recall': Recalls the memory value and updates the display.
- * - 'clear': Clears the memory value and resets the display.
- *
- * Preconditions:
- * - `RESULT.textContent` should contain a valid number for 'add' and 'subtract' actions.
- * - The `operator` variable determines whether the memory value is assigned to `firstNumber` or `secondNumber` during recall.
- *
- * Side Effects:
- * - Updates the `memoryValue`, `CURRENT_MEMORY.textContent`, and `RESULT.textContent`.
- * - Modifies the `memoryIsActive` and `shouldResetDisplay` flags.
- * - Resets the display when the 'clear' action is performed.
+ * Possible values are:
+ * - add: Adds the current result to memory.
+ * - subtract: Subtracts the current result from memory.
+ * - recall: Recalls the value stored in memory and updates the display.
+ * - clear: Clears the memory and resets the display.
  */
 function handleMemory(action) {
   if (RESULT.textContent === '') return;
 
   if (action === 'add') {
-    memoryValue += Number(RESULT.textContent);
-    CURRENT_MEMORY.textContent = `M${memoryValue}`;
-    memoryIsActive = true;
-    shouldResetDisplay = true;
+    updateMemory('add', Number(RESULT.textContent));
   }
   if (action === 'subtract') {
-    memoryValue -= Number(RESULT.textContent);
-    CURRENT_MEMORY.textContent = `M${memoryValue}`;
-    memoryIsActive = true;
-    shouldResetDisplay = true;
+    updateMemory('subtract', Number(RESULT.textContent));
   }
   if (action === 'recall') {
     operator === ''
@@ -293,6 +306,24 @@ function handleMemory(action) {
     memoryIsActive = false;
     resetDisplay();
   }
+}
+
+/**
+ * Updates the memory value based on the specified action and value.
+ *
+ * @param {string} action - The action to perform on the memory value. Accepts 'add' to increase or 'subtract' to decrease the memory value.
+ * @param {number} value - The numeric value to add or subtract from the memory.
+ */
+function updateMemory(action, value) {
+  action === 'add'
+    ? (memoryValue += value)
+    : action === 'subtract'
+    ? (memoryValue -= value)
+    : null;
+
+  CURRENT_MEMORY.textContent = `M${memoryValue}`;
+  memoryIsActive = true;
+  shouldResetDisplay = true;
 }
 
 /**
@@ -352,14 +383,8 @@ function formatIfFloat(number) {
 }
 
 /**
- * Resets the display and memory values based on the current state.
- *
- * This function handles three scenarios:
- * 1. If `memoryIsActive` is true, it clears the `firstNumber` and the result display.
- * 2. If `memoryIsActive` is false, it clears the memory value and the memory display.
- * 3. If neither condition is met, it clears all relevant variables and display elements.
- *
- * In all cases, it resets the `shouldResetDisplay` flag to false.
+ * Resets the calculator display by clearing the current numbers and display.
+ * Also resets the flag indicating whether the display should be reset.
  */
 function resetDisplay() {
   if (memoryIsActive) {
@@ -387,20 +412,11 @@ function handleBackspace() {
 }
 
 /**
- * Resets the last number entry based on operator state
- * If no operator is present, resets firstNumber
- * If operator exists, resets secondNumber
- *
- * Clears the calculator display in both cases
+ * Resets the last entered number by updating the active number to an empty string.
+ * Utilizes the `updateActiveNumber` function to perform the update.
  */
 function resetLastEntry() {
-  if (operator === '') {
-    firstNumber = '';
-    RESULT.textContent = '';
-  } else {
-    secondNumber = '';
-    RESULT.textContent = '';
-  }
+  updateActiveNumber(() => '');
 }
 
 /**
@@ -408,6 +424,8 @@ function resetLastEntry() {
  * resetting the stored numbers and operator, and disabling the display reset flag.
  */
 function resetCalculator() {
+  RESULT.classList.remove('error');
+
   CURRENT_MEMORY.textContent = '';
   CURRENT_OPERATION.textContent = '';
   RESULT.textContent = '';
@@ -415,7 +433,7 @@ function resetCalculator() {
   firstNumber = '';
   operator = '';
   secondNumber = '';
-  shouldResetDisplay = false;
+  shouldResetCalculator = false;
 }
 
 /**
