@@ -9,19 +9,29 @@ let shouldResetDisplay = false;
 
 // Configurable precision for decimal results
 const DECIMAL_PRECISION = 2;
-////////
 
+////////
 // DOM
+// DISPLAY
 const DISPLAY = document.querySelector('#display');
 const CURRENT_MEMORY = document.querySelector('#memory');
 const CURRENT_OPERATION = document.querySelector('#operation');
 const RESULT = document.querySelector('#result');
+// NUMBERS AND OPERATIONS
 const NUMBERS = document.querySelectorAll('[data-number]');
 const OPERATORS = document.querySelectorAll('[data-operator]');
 const EQUALS = document.querySelector('[data-equals]');
+// CLEAR
 const RESET = document.querySelector('[data-clear="all"]');
 const CLEAR = document.querySelector('[data-clear="entry"]');
+// FUNCTIONS
 const BACKSPACE = document.querySelector('[data-function="backspace"]');
+const INVERT = document.querySelector('[data-function="invert"]');
+const ROOT = document.querySelector('[data-function="root"]');
+const SQUARE_ROOT = document.querySelector('[data-function="sqr"]');
+const PERCENT = document.querySelector('[data-function="percent"]');
+const RECIPROCAL = document.querySelector('[data-function="reciprocal"]');
+// MEMORY
 const MEMORY_CLEAR = document.querySelector('[data-memory="clear"]');
 const MEMORY_RECALL = document.querySelector('[data-memory="recall"]');
 const MEMORY_ADD = document.querySelector('[data-memory="add"]');
@@ -49,11 +59,7 @@ MEMORY_CLEAR.addEventListener('click', () => handleMemory('clear'));
 MEMORY_RECALL.addEventListener('click', () => handleMemory('recall'));
 MEMORY_ADD.addEventListener('click', () => handleMemory('add'));
 MEMORY_SUBTRACT.addEventListener('click', () => handleMemory('subtract'));
-
-// DISPLAY
-const para = document.createElement('p');
-para.textContent = '';
-DISPLAY.appendChild(para);
+INVERT.addEventListener('click', () => handleInvert());
 
 // FUNCTIONS
 /**
@@ -282,6 +288,22 @@ function handleMemory(action) {
     memoryValue = 0;
     memoryIsActive = false;
     resetDisplay();
+  }
+}
+
+/**
+ * Toggles the sign of the current number being input (either `firstNumber` or `secondNumber`).
+ * If no operator is selected, it inverts the `firstNumber`.
+ * Otherwise, it inverts the `secondNumber`.
+ * Updates the displayed result accordingly.
+ */
+function handleInvert() {
+  if (operator === '') {
+    firstNumber = -1 * firstNumber;
+    RESULT.textContent = firstNumber;
+  } else {
+    secondNumber = -1 * secondNumber;
+    RESULT.textContent = secondNumber;
   }
 }
 

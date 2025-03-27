@@ -125,7 +125,7 @@ main {
     grid-template-areas:
       'mc mr subtract add backspace'
       'ac ce invert root sqr'
-      'seven eight nine divide percentage'
+      'seven eight nine divide percent'
       'four five six multiply reciprocal'
       'one two three minus equals'
       'zero zero decimal sum equals';
@@ -188,8 +188,8 @@ main {
     & [data-operator='/'] {
       grid-area: divide;
     }
-    & [data-function='percentage'] {
-      grid-area: percentage;
+    & [data-function='percent'] {
+      grid-area: percent;
     }
 
     /* FOURTH ROW */
