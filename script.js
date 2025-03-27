@@ -85,7 +85,7 @@ function handleKeyboardInput(e) {
       case 'r':
         handleMemory('recall');
         break;
-      case 'c':
+      case 'q':
         handleMemory('clear');
         break;
 
@@ -181,7 +181,6 @@ function evaluate() {
 function handleNumber(number) {
   if (shouldResetDisplay) {
     resetDisplay();
-    shouldResetDisplay = false;
   }
 
   if (operator === '') {
@@ -208,7 +207,7 @@ function handleNumber(number) {
 /**
  * Handles the selection of an operator for a calculator operation.
  * Updates the first number is not set, the function exits early.
- * * If the second number is already set, it evaluates the current operation before assigning the new operator.
+ * If the second number is already set, it evaluates the current operation before assigning the new operator.
  *
  * @param {string} sign - The operator sign selected by the user.
  *                        Can be '+', '-', '*', '/', 'x', etc.
@@ -301,12 +300,23 @@ function formatIfFloat(number) {
 }
 
 /**
- * Clears the display and resets relevant variables when the display reset flag is set.
+ * Resets the display and memory values based on the current state.
+ *
+ * This function handles three scenarios:
+ * 1. If `memoryIsActive` is true, it clears the `firstNumber` and the result display.
+ * 2. If `memoryIsActive` is false, it clears the memory value and the memory display.
+ * 3. If neither condition is met, it clears all relevant variables and display elements.
+ *
+ * In all cases, it resets the `shouldResetDisplay` flag to false.
  */
 function resetDisplay() {
   if (memoryIsActive) {
     firstNumber = '';
     RESULT.textContent = '';
+    shouldResetDisplay = false;
+  } else if (!memoryIsActive) {
+    memoryValue = false;
+    CURRENT_MEMORY.textContent = '';
     shouldResetDisplay = false;
   } else {
     firstNumber = '';
