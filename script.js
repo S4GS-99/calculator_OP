@@ -28,7 +28,7 @@ const CLEAR = document.querySelector('[data-clear="entry"]');
 const BACKSPACE = document.querySelector('[data-function="backspace"]');
 const INVERT = document.querySelector('[data-function="invert"]');
 const ROOT = document.querySelector('[data-function="root"]');
-const SQUARE_ROOT = document.querySelector('[data-function="sqr"]');
+const SQUARE = document.querySelector('[data-function="sqr"]');
 const PERCENT = document.querySelector('[data-function="percent"]');
 const RECIPROCAL = document.querySelector('[data-function="reciprocal"]');
 // MEMORY
@@ -55,11 +55,15 @@ EQUALS.addEventListener('click', () => evaluate());
 RESET.addEventListener('click', () => resetCalculator());
 CLEAR.addEventListener('click', () => resetLastEntry());
 BACKSPACE.addEventListener('click', () => handleBackspace());
+INVERT.addEventListener('click', () => invertNumber());
+ROOT.addEventListener('click', () => rootNumber());
+SQUARE.addEventListener('click', () => squareNumber());
+PERCENT.addEventListener('click', () => makePercent());
+RECIPROCAL.addEventListener('click', () => makeReciprocal());
 MEMORY_CLEAR.addEventListener('click', () => handleMemory('clear'));
 MEMORY_RECALL.addEventListener('click', () => handleMemory('recall'));
 MEMORY_ADD.addEventListener('click', () => handleMemory('add'));
 MEMORY_SUBTRACT.addEventListener('click', () => handleMemory('subtract'));
-INVERT.addEventListener('click', () => handleInvert());
 
 // FUNCTIONS
 /**
@@ -297,12 +301,53 @@ function handleMemory(action) {
  * Otherwise, it inverts the `secondNumber`.
  * Updates the displayed result accordingly.
  */
-function handleInvert() {
+function invertNumber() {
   if (operator === '') {
     firstNumber = -1 * firstNumber;
     RESULT.textContent = firstNumber;
   } else {
     secondNumber = -1 * secondNumber;
+    RESULT.textContent = secondNumber;
+  }
+}
+
+function rootNumber() {
+  if (operator === '') {
+    firstNumber = Math.sqrt(firstNumber);
+    RESULT.textContent = firstNumber;
+  } else {
+    secondNumber = Math.sqrt(secondNumber);
+    RESULT.textContent = secondNumber;
+  }
+}
+
+function squareNumber() {
+  if (operator === '') {
+    firstNumber = firstNumber ** 2;
+    RESULT.textContent = firstNumber;
+  } else {
+    secondNumber = secondNumber ** 2;
+    RESULT.textContent = secondNumber;
+  }
+}
+
+function makePercent() {
+  if (operator === '') {
+    firstNumber = firstNumber / 100;
+    RESULT.textContent = firstNumber;
+  } else {
+    secondNumber = secondNumber / 100;
+    RESULT.textContent = secondNumber;
+  }
+}
+
+function makeReciprocal() {
+  if (operator === '') {
+    firstNumber = 1 / firstNumber;
+    RESULT.textContent = firstNumber;
+    s;
+  } else {
+    secondNumber = 1 / secondNumber;
     RESULT.textContent = secondNumber;
   }
 }
