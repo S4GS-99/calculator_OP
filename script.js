@@ -95,7 +95,7 @@ function handleKeyboardInput(e) {
 
   if (!isNaN(key) || key === '.') {
     handleNumberInput(key);
-  } else if (['i', 'r', 's', '%', '√'].includes(key.toLowerCase())) {
+  } else if (['i', 'r', 's', 'p', 'l'].includes(key.toLowerCase())) {
     handleMathFunctions(key.toLowerCase());
   } else {
     handleOperatorInput(key);
@@ -182,8 +182,8 @@ function handleMathFunctions(key) {
     i: () => invertNumber(), // 'i' for invert
     r: () => rootNumber(), // 'r' for square root
     s: () => squareNumber(), // 's' for square
-    '%': () => makePercent(), // '%' for percentage
-    '/': () => makeReciprocal(), // '/' for reciprocal
+    p: () => makePercent(), // p for percentage
+    l: () => makeReciprocal(), // l for reciprocal
   };
 
   if (mathFunctions[key]) mathFunctions[key](); // Check comment on Ln 109
@@ -370,7 +370,7 @@ function handleMemory(action) {
   if (action === 'clear') {
     memoryValue = 0;
     memoryIsActive = false;
-    resetDisplay();
+    CURRENT_MEMORY.textContent = '';
   }
 }
 
@@ -405,7 +405,7 @@ function invertNumber() {
  * Utilizes the `updateActiveNumber` function to apply the square root operation.
  */
 function rootNumber() {
-  updateActiveNumber(number => Math.sqrt(number));
+  updateActiveNumber(number => formatIfFloat(Math.sqrt(number)));
 }
 
 /**
@@ -413,7 +413,7 @@ function rootNumber() {
  * Utilizes the `updateActiveNumber` function to apply the transformation.
  */
 function squareNumber() {
-  updateActiveNumber(number => number ** 2);
+  updateActiveNumber(number => formatIfFloat(number ** 2));
 }
 
 /**
@@ -421,7 +421,7 @@ function squareNumber() {
  * Utilizes the `updateActiveNumber` function to apply the transformation.
  */
 function makePercent() {
-  updateActiveNumber(number => number / 100);
+  updateActiveNumber(number => formatIfFloat(number / 100));
 }
 
 /**
@@ -431,7 +431,7 @@ function makePercent() {
  * @throws {Error} If the active number is zero, as division by zero is undefined.
  */
 function makeReciprocal() {
-  updateActiveNumber(number => 1 / number);
+  updateActiveNumber(number => formatIfFloat(1 / number));
 }
 
 /**
@@ -453,21 +453,12 @@ function formatIfFloat(number) {
  * Also resets the flag indicating whether the display should be reset.
  */
 function resetDisplay() {
-  if (memoryIsActive) {
-    firstNumber = '';
-    RESULT.textContent = '';
-    shouldResetDisplay = false;
-  } else if (!memoryIsActive) {
-    memoryValue = false;
-    CURRENT_MEMORY.textContent = '';
-    shouldResetDisplay = false;
-  } else {
-    firstNumber = '';
-    CURRENT_MEMORY.textContent = '';
-    CURRENT_OPERATION.textContent = '';
-    RESULT.textContent = '';
-    shouldResetDisplay = false;
-  }
+  firstNumber = '';
+  secondNumber = '';
+  RESULT.textContent = '';
+  CURRENT_OPERATION.textContent = '';
+  CURRENT_MEMORY.textContent = '';
+  shouldResetDisplay = false;
 }
 
 /**
