@@ -34,32 +34,11 @@ html,
 }
 
 body {
-  display: flex;
-  flex-direction: column;
   min-height: 100vh;
-}
-
-header {
-  display: flex;
-  justify-content: left;
-  align-items: center;
-
-  width: var(--full-w);
-  height: 2em;
-
-  h1 {
-    margin: 1.5rem;
-    font-size: var(--xl-text);
-  }
-}
-
-main {
-  display: flex;
-  flex-flow: column wrap;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  margin: 1.5em;
+  display: grid;
+  place-items: center;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
 }
 
 #calculator {
@@ -74,8 +53,8 @@ main {
 
   & #display {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3,1fr);
     grid-template-areas:
       'memory ... operation operation operation operation'
       'result result result result result result'
@@ -120,8 +99,8 @@ main {
     margin-top: 0;
 
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(5,1fr);
+    grid-template-rows: repeat(6, 1fr);
     grid-template-areas:
       'mc mr subtract add backspace'
       'ac ce invert root sqr'
